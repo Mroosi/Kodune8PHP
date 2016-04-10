@@ -18,7 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // eemaldame valitud indeksiga elemendi massiivist
         $kustuta = intval($_POST['kustuta']);
-      
+        $uus_andmebaas = array();
+        foreach($andmebaas as $index => $rida){
+            if($index !=$kustuta){
+                $uus_andmebaas[] = $rida;
+            }
+        }
+      $andmebaas = $uus_andmebaas;
     } else {
             
         if( !empty($_POST['nimetus'])){

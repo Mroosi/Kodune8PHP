@@ -53,30 +53,11 @@ document.getElementById('lisa-vorm').addEventListener('submit',
             alert('Vigased väärtused!');
             return;
         }
-        
-        fetch('haldus.php', {
+        request('haldus.php', {
             method: 'post',
             body: new FormData(document.getElementById('lisa-vorm'))
-        }).then(function(res){
-            if(res.ok){
-                return res.json();
-            }else{
-                throw new Error('Vigane päring');
-            }
-            
-        }).then(function(data){
-                  
-                document.getElementById('nimetus').value = '';
-                document.getElementById('kogus').value = '';
-                document.querySelector('#ladu tbody').innerHTML='';
-                for (var i = 0; i < data.length; i++) {
-                     lisaRida(data[i].nimetus, data[i].kogus, i);
-                }
-                // kutsume välja uue tabeli rea lisamise funktsiooni
-        
-        }).catch(function(err) {
-            alert('Ilmnes viga: ' + err.message);
-        })
+        });
+
             
         });
 /**
@@ -121,7 +102,38 @@ function lisaRida(nimetus, kogus, index) {
          */
         function () {
             if (confirm('Kas oled kindel')) {
-                rida.parentNode.removeChild(rida);
+                //rida.parentNode.removeChild(rida);
+                request('haldus.php', {
+                    method:'post',
+                    headers:{
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'kustuta='+index
+                });
             }
         });
 }
+function request(url, options){
+            fetch(url, options)
+            .then(function(res){
+            if(res.ok){
+                return res.json();
+            }else{
+                throw new Error('Vigane päring');
+            }
+            
+        }).then(function(data){
+                  
+                document.getElementById('nimetus').value = '';
+                document.getElementById('kogus').value = '';
+                document.querySelector('#ladu tbody').innerHTML='';
+                for (var i = 0; i < data.length; i++) {
+                     lisaRida(data[i].nimetus, data[i].kogus, i);
+                }
+                // kutsume välja uue tabeli rea lisamise funktsiooni
+        
+        }).catch(function(err) {
+            alert('Ilmnes viga: ' + err.message);
+        })
+}
+request('haldus.php');
